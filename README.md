@@ -18,7 +18,7 @@ Source: [Coursera: Security with AWS: Identity and Access Management (IAM)](http
 This project is split into 12 tasks which build upon each other. Screenshots of basic instructions that occur throughout the project will be omitted at later tasks such as navigating to Users in the IAM dashboard. 
 
 #### Task 1: Create and log in to your AWS account as a root user and set-up Multi-factor Authentication(MFA) as a security best practice.
-Create AWS account (https://aws.amazon.com/) > free account plan > input card and billing info > phone 2FA > account created > sign out > sign back in using root user email (default is IAM user sign in & root user is created automatically when AWS account is created) > pop-up to add MFA > name the device > select method of authentication > app selected as an existing Google MFA app user > show QR code > in authenticator app, + button > scan a QR code > scan QR code with your authenticator app > enter 1st and 2nd code > register MFA > adding virtual MFA success <br/>
+Create AWS account (https://aws.amazon.com/) > free account plan > input card and billing info > phone 2FA > account created > sign out > sign back in using root user email (default is IAM user sign in & root user is created automatically(auto) when AWS account is created) > pop-up to add MFA > name the device > select method of authentication > app selected as an existing Google MFA app user > show QR code > in authenticator app, + button > scan a QR code > scan QR code with your authenticator app > enter 1st and 2nd code > register MFA > adding virtual MFA success. <br/>
 Continue to console > top-right account drop-down menu > Security credentials > MFA assigned > sign out of account and sign back in to test MFA.
 <p align="center">
 Create AWS account: <br/>
@@ -45,7 +45,8 @@ MFA enabled and working: <br/>
 <br/>
 
 #### Task 2: Create an IAM user and grant admin privileges/perms from the console as logging in as Root User is not a security best practice (principal of least privilege).
-In console dashboard search bar at the top > IAM > click on IAM > IAM dashboard with 0 users > Click on Users on the left under Access management > Top right Create user > Input desired User name "SecurityTeamAdmin" > provide user access to the Console > specify "I want to create an IAM user" > Select Custom Password(pw) > input pw > for the purposes of this project, de-select new pw creation option. In the real-world, leave the option enabled so users need to create a new pw at next sign-in > Next > select 'Attach policies directly' > grant the SecurityTeamAdmin user two perms to work as an administrator and like a root user: AdministratorAccess & AWSAccountManagementFullAccess perms > Omit 'Set permissions boundary' > Next > Review > Create user. Console sign-in URL can be sent to the new user for them to access AWS in the real-world. CSV file can be downloaded for record purposes.
+In console dashboard search bar at the top > IAM > click on IAM > IAM dashboard with 0 users > Click on Users on the left under Access management > Top right Create user > Input desired User name "SecurityTeamAdmin" > provide user access to the Console > specify "I want to create an IAM user" > Select Custom Password(pw) > input pw > for the purposes of this project, de-select new pw creation option. <br/>
+In the real-world, leave the option enabled so users need to create a new pw at next sign-in > Next > select 'Attach policies directly' > grant the SecurityTeamAdmin user two perms to work as an administrator and like a root user: AdministratorAccess & AWSAccountManagementFullAccess perms > Omit 'Set perms boundary' > Next > Review > Create user. Console sign-in URL can be sent to the new user for them to access AWS in the real-world. CSV file can be downloaded for record purposes.
 <p align="center">
 Navigate to IAM dashboard: <br/>
 <img src="https://i.imgur.com/JUDoq0f.png" width="40%" alt="AWS-IAM-LearnProject"/>
@@ -91,4 +92,104 @@ Sign-in successful: <br/>
 <br/>
 <br/>
 
-#### Task 3: Generate access keys from the SecurityTeamAdmin account to create more users from the CLI.
+#### Task 3: Generate access keys from the SecurityTeamAdmin account to create more users from the CLI. Some notes about access keys: 
+- Needed for programmatic access (CLI, API, or other dev tools)
+- Contains 2 parts: access ID & secret access key
+- Max of 2 access keys per AWS account
+- As a security best practice, do not create access keys from the root account
+
+Top right drop-down menu > Security credentials > Access keys > Create access key > CLI > input optional description tag > Create access key > Key created successfully > Access key part is the public part of the key, secret access key is the private part (You can only see the secret access key only once) > Download CSV file to keep it safe > Done
+<p align="center">
+Create access key: <br/>
+<img src="https://i.imgur.com/dX4MeE8.png" width="100%" alt="AWS-IAM-LearnProject"/>
+<br/>
+CLI use case: <br/>
+<img src="https://i.imgur.com/9Zeew0T.png" width="70%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Optional description tag: <br/>
+<img src="https://i.imgur.com/yPRItuc.png" width="70%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Access key created; download csv file: <br/>
+<img src="https://i.imgur.com/xEJPtVC.png" width="70%" alt="AWS-IAM-LearnProject"/>
+<br/>
+
+Download AWS CLI version 2 (Google search-https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) > verify download in cmd with command "awes --version" > access AWS account by configuring the SecurityTeamAdmin account > command "aws configure" > copy access ID from csv and input into cmd > same as secret access key > input region name that is found in AWS console home > "text" for the output format > AWS CLI now configured for SecurityTeamAdmin. <br/>
+Create users from CLI using command "aws iam create-user --user-name [input name]" > Create 2 more users (Brian2 & Brian3) > back in AWS IAM dashboard > 4 users now
+<p align="center">
+Download & verify AWS CLI version: <br/>
+<img src="https://i.imgur.com/54Vspn6.png" width="50%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Configure SecurityTeamAdmin via CLI: <br/>
+<img src="https://i.imgur.com/5zGeP5q.png" width="50%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Region name located beside console drop-down menu: <br/>
+<img src="https://i.imgur.com/FrB4Pvc.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Create additional users via CLI: <br/>
+<img src="https://i.imgur.com/YXxn7Ry.png" width="80%" alt="AWS-IAM-LearnProject"/>
+<br/>
+4 users: <br/>
+<img src="https://i.imgur.com/ltdE1FG.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+<br/>
+
+#### Task 4: Create IAM groups, assign permissions, and add users to the groups.
+AWS IAM console > 'User groups' under Access management > Create group > input group name > add desired users into the group > Assign AdministratorAccess permisssion > Create user group > click into the group > Click on Brian > see that Brian auto inherited the administrator access policy that was attached to the user group.
+<p align="center">
+Create group: <br/>
+<img src="https://i.imgur.com/mzClhnh.png" width="20%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Name group and add users: <br/>
+<img src="https://i.imgur.com/qKMbnbP.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Attach perms & create group: <br/>
+<img src="https://i.imgur.com/a7BlGkW.png" width="100%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Click into the group & the user Brian: <br/>
+<img src="https://i.imgur.com/TEnALqG.png" width="60%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Permission assigned automatically: <br/>
+<img src="https://i.imgur.com/wFpHctl.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+
+Create a group called CloudSecurityTeam from the CLI & give full access to AWS Amazon S3 to the users in that group. Open cmd > Command "aws iam create-group --group-name CloudSecurityTeam" and paste in CLI > inspect User groups in console to verify > verified created but perms are not defined > add Brian2 and Brian3 to the CloudSecurityTeam group > command "aws iam add-user-to-group --group-name CloudSecurityTeam --user-name Brian2" > same for Brian3. <br/>
+Attach Amazon S3 full access policy to the group but ARNs are needed to identify the AWS resource: AWS console > Policies under Access management > Search for 'S3' and select AmazonS3FullAccess > click on it > Should see ARN somewhere in the policy info/description > CLI command "aws iam attach-group-policy --group-name CloudSecurityTeam --policy-arn "[copy & paste the ARN from above]".
+<p align="center">
+Create group via CLI: <br/>
+<img src="https://i.imgur.com/4PV9zzp.png" width="70%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Verify new group was created; perms not defined: <br/>
+<img src="https://i.imgur.com/PlS96LF.png" width="50%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Add other users to the group: <br/>
+<img src="https://i.imgur.com/jFDJl6H.png" width="60%" alt="AWS-IAM-LearnProject"/>
+<br/>
+AmazonS3FullAccess policy: <br/>
+<img src="https://i.imgur.com/P3HeNkY.png" width="50%" alt="AWS-IAM-LearnProject"/>
+<br/>
+ARN of the policy: <br/>
+<img src="https://i.imgur.com/HX7x2mx.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Attach policy to the group via CLI using the ARN: <br/>
+<img src="https://i.imgur.com/mrP9sL7.png" width="90%" alt="AWS-IAM-LearnProject"/>
+<br/>
+
+Verify work. IAM dashboard > User groups > perms are now defined for CloudSecurityTeam > click into the group > can see the 2 users we added via CLI earlier > Permissions > AmazonS3 policy assigned via CLI > click into 1 of the users > can see Brian2 auto inherited the policy as well.
+<p align="center">
+: <br/>
+<img src="" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+: <br/>
+<img src="" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+: <br/>
+<img src="" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+: <br/>
+<img src="" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+
+
+
+
+#### Task 5: 
