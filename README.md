@@ -348,15 +348,206 @@ New policy created: <br/>
 #### Task 8: grant AWS cross-account access using IAM roles. 
 Open an incognito/private browser, login to audit team AWS account using credentials provided within the project > 2 different accounts now; 1 is SecurityTeam, another is AuditTeamAdmin > we want the audit team to access the security team account for a short period of time > create an IAM role in the SecurityTeamAdmin account for the audit team. <br/>
 In SecurityTeam IAM dashboard > roles > Create role > trusted entity type: AWS account > another AWS account > copy the account ID from the admin account & paste in the account ID field > leave other options blank for project purposes > Next > search for S3ReadOnly as we want the audit team to only read info in the S3 bucket > Next > input role name and description > Create role. <br/>
-Click on the created role > Trust relationships > account ID of the audit team is displayed > copy account ID of SecurityTeam > head into AuditTeam account (incognito browser) > drop-down menu > Switch role > paste SecurityTeam account ID > role name: AuditFinData > Display Name: AuditTeam > Switch Role > in the AuditTeam browser account drop-down > currently in the SecurityTeamAdmin's AuditFinData role without sharing credentials > also see the actual signed in account. <br/>
+Click on the created role > Trust relationships > account ID of the audit team is defined in "AWS" > copy account ID of SecurityTeam > head into AuditTeam account (incognito browser) > drop-down menu > Switch role > paste SecurityTeam account ID > role name: AuditFinData > Display Name: AuditTeam > Switch Role > in the AuditTeam browser account drop-down > currently in the SecurityTeamAdmin's AuditFinData role without sharing credentials > also see the actual signed in account. <br/>
+<p align="center">
+Sign into AuditTeam account: <br/>
+<img src="https://i.imgur.com/DbsElVg.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Create role in SecurityTeam account: <br/>
+<img src="https://i.imgur.com/OdPNSSk.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Copy AuditTeam account ID: <br/>
+<img src="https://i.imgur.com/iXgXK6m.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Paste AuditTeam ID: <br/>
+<img src="https://i.imgur.com/9p51hKI.png" width="50%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Attach perm & role details: <br/>
+<img src="https://i.imgur.com/2v4e5km.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Role created: <br/>
+<img src="https://i.imgur.com/chCTMmD.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Role data includes AuditTeam account ID: <br/>
+<img src="https://i.imgur.com/rinhni1.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Copy SecurityTeam account ID: <br/>
+<img src="https://i.imgur.com/kBUWTdt.png" width="35%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Switch role in AuditTeam account: <br/>
+<img src="https://i.imgur.com/qmoLwNK.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Paste SecurityTeam account ID & role details: <br/>
+<img src="https://i.imgur.com/3iwC5rp.png" width="55%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Role switch successful: <br/>
+<img src="https://i.imgur.com/7PKVhsD.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
 
+Test if the role switch, policy, & perm is set up properly by accessing the EC2 instance. <br/>
+EC2 dashboard > lots of errors which is good > navigate into S3 dashboard > able open the S3 bucket & view/download the objects in the bucket which is fine as S3 read only policy was attached > try to upload into the bucket > Upload > Add files > random file > upload > Upload failed error banner & access denied under Error verifying the role was set-up correctly. <br/>
+Switch back to AuditTeam account > no buckets created which is correct. <br/>
+<p align="center">
+EC2 dashboard: <br/>
+<img src="https://i.imgur.com/3u82wUM.png" width="60%" alt="AWS-IAM-LearnProject"/>
+<br/>
+S3 bucket: <br/>
+<img src="https://i.imgur.com/KTzP2Fg.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Viewable objects: <br/>
+<img src="https://i.imgur.com/ecWFKg5.png" width="55%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Upload a file: <br/>
+<img src="https://i.imgur.com/j4fXkPx.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Upload failed: <br/>
+<img src="https://i.imgur.com/gkNDLkq.png" width="55%" alt="AWS-IAM-LearnProject"/>
+<br/>
+AuditTeam account: <br/>
+<img src="https://i.imgur.com/hkuRWpA.png" width="20%" alt="AWS-IAM-LearnProject"/>
+<br/>
+No buckets available: <br/>
+<img src="https://i.imgur.com/YX7omLg.png" width="60%" alt="AWS-IAM-LearnProject"/>
+<br/>
+<br/>
 
+#### Task 9: Create an external ID for the AuditTeam IAM role to access financial data via CLI.
+In the SecurityTeam account > EC2 dashboard > Launch instance > reconfigure it back to the audit team account > command "aws configure" > copy & paste the project provided access key ID & secret access key > command "aws sts get-caller-identity" to ensure we are in the audit team account > command "aws s3 ls" will not show any buckets since no buckets were created in the AuditTeam account. <br/>
+<p align="center">
+Reconfigure to AuditTeam account: <br/>
+<img src="https://i.imgur.com/yO0esTI.png" width="80%" alt="AWS-IAM-LearnProject"/>
+<br/>
 
+SecurityTeam IAM dashboard > Roles > Create role > AWS acc > Another AWS acc > input AuditTeam account ID > select Require external ID > input desired external ID of audit team (@Access222) > Next > Filter by customer managed > select the S3ListAndReadPolicy that we created earlier for role to read and list S3 buckets > Next > input Role name and description (AuditFinDataExtID - Allow audit team access to financial data with an external ID) > Trust policy states the account ID of the audit team & the external ID > create role.
+<p align="center">
+Create role for external ID: <br/>
+<img src="https://i.imgur.com/kfIuZMx.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Attach S3 list & read policy: <br/>
+<img src="https://i.imgur.com/9huk3oU.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Trust policy: <br/>
+<img src="https://i.imgur.com/hzKtrPa.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Role created: <br/>
+<img src="https://i.imgur.com/BOLWZFk.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
 
+Require the ARN of the role > click on the role > copy the ARN > back in CLI > command "aws sts assume-role --role-arn [paste ARN] --role-session-name auditdemo --external-id @[access ID]" > received temp access! > Need to grab the credentials then export/set the credentials to be able to use them as part of the external ID > set AWS access key ID with command "set AWS_ACCESS_KEY_ID=[paste key ID] " > copy the ID in the results above > set secret access key ID with command "set AWS_SECRET_ACCESS_KEY_ID=[paste secret key ID]" > same process for session token with command "set AWS_SESSION_TOKEN=[paste token] > enter. <br/>
+Please click on the image below directly for the enlarged version. 
+<p align="center">
+Retrieve credentials & set them: <br/>
+<img src="https://i.imgur.com/QggCnIN.png" width="100%" alt="AWS-IAM-LearnProject"/>
+<br/>
+<br/>
 
+#### Task 10: revoke an IAM role's session if the temporary security credentials are leaked.
+Best practice is to invalidate leaked credentials as that will not cause problems for other authorized 3rd party users; they will just need to generate new temp security credentials. <br/>
+Roles > click on the role > Revoke sessions > Revoke active sessions > acknowledge > Revoke active sessions > Permissions tab > another policy has been added called 'AWSRevokeOlderSessions' > click on it > JSON states that it is denying all (denoted by the * wildcard) actions & resources > also states a time condition which means the policy only applies if the AWS token issue time is before than the stated time > Visual is similar as well.
+<p align="center">
+Revoke active sessions: <br/>
+<img src="https://i.imgur.com/IxFUvfn.png" width="55%" alt="AWS-IAM-LearnProject"/>
+<br/>
+AWSRevokeOlderSessions: <br/>
+<img src="https://i.imgur.com/1FsImz9.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+JSON: <br/>
+<img src="https://i.imgur.com/jjZeuAf.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Visual: <br/>
+<img src="https://i.imgur.com/lYa1iUu.png" width="35%" alt="AWS-IAM-LearnProject"/>
+<br/>
+<br/>
 
+#### Optional Task Self Practice: using cmd, reconfigure CLI from SecurityTeam account to AuditTeam's account using 'AWS configure'
+Close cmd and reopen cmd > command "sts get-caller-identity" to view current user > be ready with AdminTeam account access key and secret access key (can be found in the incognito browser that is signed in to the AdminTeam AWS account) > configure to AuditTeam with command "aws configure" > copy & paste access key ID & secret access key > input region name of AuditTeam account > Text output format > command "sts get-caller-identity" to view new user. <br/>
 
+Same steps & commands as the task above in assuming the role of AuditFinDataExtID, & retrieving the temp security credentials > set access key ID, secret access key, and session token > verify buckets can be seen with command "aws s3 ls" > verify objects within bucket can be seen with command "aws s3 ls s3://[bucket name] > try deleting the bucket with command "aws s3 rb s3://[bucket name]" > an error occurred (AccessDenied) due to policy not allowing it. <br/>
+This practice activity also shows that cross account access can be set-up relatively quickly after revoking the role session earlier.
+<p align="center"> 
+Verify & switch user: <br/>
+<img src="https://i.imgur.com/VYeMiri.png" width="70%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Retrieve temp security crendentials: <br/>
+<img src="https://i.imgur.com/5WD6o5d.png" width="80%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Export/set the new temp security credentials & verify bucket viewing: <br/>
+<img src="https://i.imgur.com/KHsaGrJ.png" width="80%" alt="AWS-IAM-LearnProject"/>
+<br/>
+View objects inside bucket: <br/>
+<img src="https://i.imgur.com/gfdEZfz.png" width="45%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Error trying to delete bucket: <br/>
+<img src="https://i.imgur.com/iwc4SXr.png" width="80%" alt="AWS-IAM-LearnProject"/>
+<br/>
+<br/>
 
+#### Task 11: set permission boundaries for IAM entities (users or roles). 
+Permissions boundaries set the maximum permissions that an IAM user/role can ever possess. Boundaries are useful when perms need to be delegated. <br/>
+For example, James is hired & the SecurityTeam attaches full access policy so James can manage all IAM users, groups, roles, and entites of the account. 2 problems: James could change his own perms without restrictions, or create another IAM user for non-authorized activity. To prevent these, perm boundaries need to be set. <br/>
+
+SecurityTeam IAM dashboard > Policies > Create policy > copy the Json script provided within the project > Json policy editor > remove default and paste > any lines with a red x requires editing > copy account ID and paste in the script wherever it asks for it > input James in the Username > Next > Name: IAMPermissionBoundary > Description: Permissions boundary policy > Create policy.
+<p align="center">
+Provided JSON script (note line 58): <br/>
+<img src="https://i.imgur.com/hkUF6Iu.png" width="60%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Copy account ID: <br/>
+<img src="https://i.imgur.com/hr15I7Y.png" width="25%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Input info into required lines (note correct line 58 and incorrect line 70 & 71): <br/>
+<img src="https://i.imgur.com/xJTImPk.png" width="45%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Policy created: <br/>
+<img src="https://i.imgur.com/OJ0bSwM.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+
+Create a new user James > IAM dashboard > Users > Create user > User name: James > provide James access to the AWS Management Console > I want to create an IAM user > Custom pw > uncheck new pw creation for project purposes > Next > Attach policies directly > attach IAMFullAccess because James will be an admin > Set permissions boundary > filter by Customer managed > select the permission created earlier > Next > Review > Create user > Copy the Console sign-in URL > paste URL in an incognito window > sign in as James > search for IAM > Access denied > Users > Click into James > Permissions tab displays access denied so James cannot change their own permissions > also no permissions to get user info. 
+<p align="center">
+Create new user: <br/>
+<img src="https://i.imgur.com/3RpeVcA.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Attach IAMFullAccess perm: <br/>
+<img src="https://i.imgur.com/QawpbJo.png" width="50%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Attach perm boundary policy: <br/>
+<img src="https://i.imgur.com/SHq9XsI.png" width="50%" alt="AWS-IAM-LearnProject"/>
+<br/>
+2 total perms attached to James: <br/>
+<img src="https://i.imgur.com/BXKPQE6.png" width="20%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Copy James's sign-in URL: <br/>
+<img src="https://i.imgur.com/yGwbekV.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Incognito browser sign-in: <br/>
+<img src="https://i.imgur.com/tz0TX14.png" width="65%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Sign in as James: <br/>
+<img src="https://i.imgur.com/JOOwABd.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Access denied for multiple actions: <br/>
+<img src="https://i.imgur.com/y20Hj1p.png" width="50%" alt="AWS-IAM-LearnProject"/>
+<br/>
+<br/>
+
+#### Task 12: test and debug policies using the IAM policy simulator. 
+Create a policy that deny a previous user access to create an S3 bucket > IAM dashboard > policies > S3 as the service > JSON > Effect: Allow → Deny > Action: "s3:CreateBucket" > Resource: "*" > Next > Policy denies all createbucket access > Input policy name: DenyS3CreateBucket, Description: Deny access to create an S3 bucket > Create policy. <br/>
+Users > Brian2 > Permission policies > Add permissions > Attach policies directly > filter by customer managed > Select the recently created Deny policiy > Next > Add perm.
+<p align="center">
+Edit perm via JSON: <br/>
+<img src="https://i.imgur.com/nM11Y8x.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Post edit perm: <br/>
+<img src="https://i.imgur.com/986RJII.png" width="30%" alt="AWS-IAM-LearnProject"/>
+<br/> 
+Add perms in user Brian2: <br/>
+<img src="https://i.imgur.com/xm3SILH.png" width="50%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Attach recently created deny policy: <br/>
+<img src="https://i.imgur.com/XZPH638.png" width="40%" alt="AWS-IAM-LearnProject"/>
+<br/>
+Add perm: <br/>
+<img src="https://i.imgur.com/ZBYAo7X.png" width="50%" alt="AWS-IAM-LearnProject"/>
+<br/>
 
 
 
