@@ -9,6 +9,9 @@ Source: [Coursera: Security with AWS: Identity and Access Management (IAM)](http
 - Create users, roles, & policies in the AWS IAM console and configure/implement them as needed
 - Set permissions(perms) boundary for an IAM entity adhering principle of least privilege
 - Test and debug IAM policies using the IAM policy simulator
+
+### Takeaways
+This project was a great introduction to basic IAM concepts and tasks. Even without instruction, the tasks would have been completable as AWS has extensive documentation and seems visually intuitive. Although the tasks were somewhat repititive throughout, it was great as that resulted in good practice so I could complete the optional self tasks on my own. 
   
 ### Tools Used
 - AWS; specifically IAM console & some EC2
